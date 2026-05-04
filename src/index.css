@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    /* Using @apply for consistent Tailwind behavior */
+    @apply text-gray-900 antialiased bg-white;
+    /* Inter is our primary font, followed by system fallbacks */
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+}
+
+/* Custom Skeleton Pulse speed - making it slightly smoother than default */
+@layer components {
+  .animate-pulse {
+    animation-duration: 1.5s;
+  }
+}
