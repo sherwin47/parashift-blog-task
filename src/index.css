@@ -8,10 +8,8 @@
   }
   
   body {
-    /* Using @apply for consistent Tailwind behavior */
-    @apply text-gray-900 antialiased bg-white;
-    /* Inter is our primary font, followed by system fallbacks */
-    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    @apply text-gray-900 antialiased bg-white font-sans;
+    font-feature-settings: 'kern' 1;
   }
 }
 
