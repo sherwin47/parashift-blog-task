@@ -2,12 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 
 const navLinks = ['Who We Are', 'What We Do', 'Work', 'Join Us'];
+const navHref = {
+  'Who We Are': 'https://www.parashifttech.com/about-us',
+  'What We Do': 'https://www.parashifttech.com/services',
+  Work: 'https://www.parashifttech.com/work',
+  'Join Us': 'https://www.parashifttech.com/careers',
+};
 
 
 const ACCENT = '#E34C38';
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
+  const [showMobileMenu, setShowMobileMenu] = useState(false);
+  const [language, setLanguage] = useState('EN');
 
   useEffect(() => {
     const onScroll = () => {
@@ -48,9 +56,11 @@ const Navbar = () => {
 
         <div className="hidden items-center gap-7 text-[14px] font-medium lg:flex">
           {navLinks.map((item) => (
-            <button
+            <a
               key={item}
-              type="button"
+              href={navHref[item]}
+              target="_blank"
+              rel="noreferrer"
               className={`relative inline-flex items-center gap-1 transition-colors ${
                 scrolled
                   ? 'text-neutral-800 hover:text-neutral-950'
@@ -63,7 +73,7 @@ const Navbar = () => {
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
               )}
-            </button>
+            </a>
           ))}
           <NavLink
             to="/blogs"
@@ -80,23 +90,24 @@ const Navbar = () => {
           >
             Blog
           </NavLink>
-          <button
-            type="button"
+          <a
+            href="mailto:hello@parashifttech.com"
             className={`transition-colors ${
               scrolled ? 'text-neutral-800 hover:text-neutral-950' : 'text-white/90 hover:text-white'
             }`}
           >
             Let&apos;s Connect
-          </button>
+          </a>
           <button
             type="button"
+            onClick={() => setLanguage((prev) => (prev === 'EN' ? 'AR' : 'EN'))}
             className={`inline-flex items-center gap-2 px-3 py-1.5 text-[12px] uppercase tracking-wide transition-colors ${
               scrolled
                 ? 'border border-neutral-200/80 bg-white/50 text-neutral-900 backdrop-blur-sm'
                 : 'border border-white/20 bg-white/5 text-white'
             }`}
           >
-            EN
+            {language}
             <svg className="h-3 w-3 opacity-80" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
@@ -106,8 +117,10 @@ const Navbar = () => {
         <div className="lg:hidden">
           <button
             type="button"
+            onClick={() => setShowMobileMenu((prev) => !prev)}
             className={`p-2 ${scrolled ? 'text-neutral-900' : 'text-white'}`}
-            aria-label="Open menu"
+            aria-label="Toggle menu"
+            aria-expanded={showMobileMenu}
           >
             <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
@@ -115,6 +128,21 @@ const Navbar = () => {
           </button>
         </div>
       </div>
+      {showMobileMenu && (
+        <div className={`border-t px-5 pb-5 pt-4 lg:hidden ${scrolled ? 'border-neutral-200 bg-white text-neutral-900' : 'border-white/20 bg-black text-white'}`}>
+          <div className="flex flex-col gap-4 text-sm">
+            {navLinks.map((item) => (
+              <a key={item} href={navHref[item]} target="_blank" rel="noreferrer" className="w-fit">
+                {item}
+              </a>
+            ))}
+            <NavLink to="/blogs" onClick={() => setShowMobileMenu(false)} className="w-fit">
+              Blog
+            </NavLink>
+            <a href="mailto:hello@parashifttech.com" className="w-fit">Let&apos;s Connect</a>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { api } from '../services/api';
 import { useFetch } from '../hooks/useFetch';
@@ -8,10 +8,8 @@ import { createPostSlug, formatDate, getPostIdFromSlug, getPublishDateFromPostId
 const BlogDetail = () => {
   const { slug } = useParams();
   const postId = getPostIdFromSlug(slug);
-  const [relatedPosts, setRelatedPosts] = useState([]);
 
-  
-  const { data: post, loading, error } = useFetch(
+  const { data: post, loading, error, refetch } = useFetch(
     () => {
       if (!postId) {
         return Promise.reject(new Error('Invalid blog URL'));
@@ -20,28 +18,53 @@ const BlogDetail = () => {
     },
     [postId]
   );
-  
-  
-  const { data: allPosts } = useFetch(api.getPosts);
+  const { data: allPosts, refetch: refetchRelated } = useFetch(api.getPosts);
 
   useEffect(() => {
     window.scrollTo(0, 0);
-    if (allPosts && postId) {
-      
-      const filtered = allPosts
-        .filter((p) => p.id !== postId)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 3);
-      setRelatedPosts(filtered);
-    }
+  }, [postId]);
+
+  const isSlugMismatch = useMemo(() => {
+    if (!post || !slug) return false;
+    return createPostSlug(post) !== slug;
+  }, [post, slug]);
+
+  const relatedPosts = useMemo(() => {
+    if (!allPosts || !postId) return [];
+    return allPosts
+      .filter((p) => p.id !== postId)
+      .sort((a, b) => Math.abs(a.id - postId) - Math.abs(b.id - postId))
+      .slice(0, 3);
   }, [allPosts, postId]);
 
-  if (error) {
+  const bodyParagraphs = useMemo(() => {
+    if (!post?.body) return [];
+    const base = post.body.trim();
+    return [
+      base,
+      `${base.charAt(0).toUpperCase()}${base.slice(1)}. ${base}`,
+      `${base} ${base}`,
+    ];
+  }, [post]);
+
+  if (error || isSlugMismatch) {
     return (
       <div className="max-w-5xl mx-auto px-6 py-20">
         <div className="rounded-2xl border border-red-200 bg-red-50 p-8 text-center">
           <h2 className="text-2xl font-bold text-red-700">Blog not found</h2>
-          <p className="mt-2 text-red-600">{error}</p>
+          <p className="mt-2 text-red-600">{isSlugMismatch ? 'The requested blog URL is invalid.' : error}</p>
+          {!isSlugMismatch && (
+            <button
+              type="button"
+              onClick={() => {
+                refetch();
+                refetchRelated();
+              }}
+              className="mt-6 mr-4 border border-red-300 bg-white px-5 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
+            >
+              Retry
+            </button>
+          )}
           <Link to="/blogs" className="inline-block mt-6 text-sm font-semibold text-blue-600 hover:underline">
             Back to all blogs
           </Link>
@@ -49,7 +72,7 @@ const BlogDetail = () => {
       </div>
     );
   }
-  if (loading || !post) return <div className="max-w-5xl mx-auto px-6 py-20"><Skeleton type="detail" /></div>;
+  if (loading || !post) return <div className="max-w-5xl mx-auto px-6 py-20"><Skeleton type="detail" mirrored /></div>;
 
   const publishDate = formatDate(getPublishDateFromPostId(post.id));
   const readTime = getReadTimeFromContent(post.body);
@@ -86,14 +109,12 @@ const BlogDetail = () => {
 
       <div className="mx-auto max-w-[920px] px-6 text-[#262626] md:px-8">
         <div className="prose prose-lg max-w-none prose-p:leading-relaxed prose-p:text-[20px] prose-p:text-[#2a2a2a] prose-blockquote:border-l-[#d0605a] prose-blockquote:text-[#2a2a2a]">
-          <p>
-            {post.body}
-          </p>
-          <p>{post.body.repeat(8)}</p>
+          <p>{bodyParagraphs[0]}</p>
+          <p>{bodyParagraphs[1]}</p>
           <blockquote>
             Digital capability is not optional anymore. It is now your most visible business asset.
           </blockquote>
-          <p>{post.body.repeat(4)}</p>
+          <p>{bodyParagraphs[2]}</p>
         </div>
 
         <section className="mt-20 border-t border-[#e2e2e2] pt-10">

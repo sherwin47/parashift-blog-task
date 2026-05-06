@@ -4,6 +4,7 @@ export const useFetch = (apiCall, dependencies = []) => {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     let isMounted = true;
@@ -22,7 +23,9 @@ export const useFetch = (apiCall, dependencies = []) => {
       });
 
     return () => { isMounted = false; };
-  }, dependencies);
+  }, [...dependencies, refreshKey]);
 
-  return { data, loading, error };
+  const refetch = () => setRefreshKey((prev) => prev + 1);
+
+  return { data, loading, error, refetch };
 };

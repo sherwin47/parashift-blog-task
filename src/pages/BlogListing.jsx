@@ -14,7 +14,7 @@ const getCategoryByPostId = (id) => {
 const BlogListing = () => {
   const [activeTab, setActiveTab] = useState('All');
   const [visibleCount, setVisibleCount] = useState(6);
-  const { data: posts, loading, error } = useFetch(api.getPosts);
+  const { data: posts, loading, error, refetch } = useFetch(api.getPosts);
 
   const filteredPosts = (posts || []).filter((post) => {
     if (activeTab === 'All') return true;
@@ -72,6 +72,13 @@ const BlogListing = () => {
           <div className="mt-12 rounded border border-red-200 bg-red-50 p-6 text-center">
             <p className="text-lg font-semibold text-red-700">Unable to load blogs right now.</p>
             <p className="mt-2 text-base text-red-600">{error}</p>
+            <button
+              type="button"
+              onClick={refetch}
+              className="mt-4 border border-red-300 bg-white px-5 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100"
+            >
+              Retry
+            </button>
           </div>
         )}
 

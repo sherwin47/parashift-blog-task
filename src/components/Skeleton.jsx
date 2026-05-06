@@ -19,10 +19,10 @@ const Skeleton = ({ type, mirrored = false }) => {
     <div className="animate-pulse space-y-8">
       <div className="h-[360px] w-full bg-[#e4e4e4]" />
       <div className="mx-auto max-w-[920px] space-y-5 px-6">
-        <div className="h-12 w-4/5 bg-[#e4e4e4]" />
-        <div className="h-5 w-full bg-[#e4e4e4]" />
-        <div className="ml-auto h-5 w-11/12 bg-[#e4e4e4]" />
-        <div className="h-5 w-2/3 bg-[#e4e4e4]" />
+        <div className={`h-12 bg-[#e4e4e4] ${mirrored ? 'ml-auto w-3/4' : 'w-4/5'}`} />
+        <div className={`h-5 bg-[#e4e4e4] ${mirrored ? 'ml-auto w-11/12' : 'w-full'}`} />
+        <div className={`h-5 bg-[#e4e4e4] ${mirrored ? 'w-full' : 'ml-auto w-11/12'}`} />
+        <div className={`h-5 bg-[#e4e4e4] ${mirrored ? 'ml-auto w-2/3' : 'w-2/3'}`} />
       </div>
       <div className="mx-auto max-w-[1220px] space-y-4 px-6">
         <div className="h-9 w-1/4 bg-[#e4e4e4]" />
@@ -30,7 +30,7 @@ const Skeleton = ({ type, mirrored = false }) => {
           {Array.from({ length: 3 }).map((_, index) => (
             <div key={index} className="space-y-3">
               <div className="aspect-[16/10] bg-[#e4e4e4]" />
-              <div className={`h-5 bg-[#e4e4e4] ${index % 2 ? 'ml-auto w-4/5' : 'w-full'}`} />
+              <div className={`h-5 bg-[#e4e4e4] ${(mirrored || index % 2) ? 'ml-auto w-4/5' : 'w-full'}`} />
             </div>
           ))}
         </div>
