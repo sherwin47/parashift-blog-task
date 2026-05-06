@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 
 const navLinks = ['Who We Are', 'What We Do', 'Work', 'Join Us'];
 
-/** Parashift accent — active nav / logo triangle */
+
 const ACCENT = '#E34C38';
 
 const Navbar = () => {

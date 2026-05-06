@@ -1,10 +1,10 @@
-// Truncate text for descriptions
+
 export const truncateText = (text, length = 100) => {
   if (text.length <= length) return text;
   return text.substring(0, length) + "...";
 };
 
-// Convert text into URL-safe segment
+
 export const slugify = (value = "") => {
   return value
     .toLowerCase()
@@ -14,13 +14,13 @@ export const slugify = (value = "") => {
     .replace(/-+/g, "-");
 };
 
-// Build route slug: title + id guarantees uniqueness
+
 export const createPostSlug = (post) => {
   if (!post?.id) return "";
   return `${slugify(post.title || "blog")}-${post.id}`;
 };
 
-// Read id from "some-title-12" route slug
+
 export const getPostIdFromSlug = (slug = "") => {
   const parts = slug.split("-");
   const candidate = Number(parts[parts.length - 1]);

@@ -10,7 +10,7 @@ const BlogDetail = () => {
   const postId = getPostIdFromSlug(slug);
   const [relatedPosts, setRelatedPosts] = useState([]);
 
-  // Fetch individual post
+  
   const { data: post, loading, error } = useFetch(
     () => {
       if (!postId) {
@@ -21,13 +21,13 @@ const BlogDetail = () => {
     [postId]
   );
   
-  // Fetch all posts to derive "Related" section
+  
   const { data: allPosts } = useFetch(api.getPosts);
 
   useEffect(() => {
     window.scrollTo(0, 0);
     if (allPosts && postId) {
-      // Exclude current blog and pick 3 random ones
+      
       const filtered = allPosts
         .filter((p) => p.id !== postId)
         .sort(() => 0.5 - Math.random())
